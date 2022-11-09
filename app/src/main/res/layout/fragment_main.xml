@@ -65,6 +65,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imageRecyclerView"
                 onClick="@{viewModel.onClickImage}"
                 pixabayHits="@{viewModel.images}"
                 onScroll="@{viewModel.onScroll}"

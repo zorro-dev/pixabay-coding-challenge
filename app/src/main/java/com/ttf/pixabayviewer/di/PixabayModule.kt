@@ -3,6 +3,7 @@ package com.ttf.pixabayviewer.di
 import android.content.Context
 import com.ttf.pixabayviewer.data.*
 import com.ttf.pixabayviewer.data.api.PixabayApi
+import com.ttf.pixabayviewer.data.network.NetworkCheck
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,9 +32,9 @@ object PixabayModule {
     fun providePixabayRepository(
         pixabayDataSource: PixabayDataSource,
         cacheDataSource: ImagesCacheDataSource,
-        networkInfo: NetworkInfo,
+        networkCheck: NetworkCheck,
     ): PixabayRepository {
-        return PixabayRepositoryImpl(pixabayDataSource, cacheDataSource, networkInfo)
+        return PixabayRepositoryImpl(pixabayDataSource, cacheDataSource, networkCheck)
     }
 
 }

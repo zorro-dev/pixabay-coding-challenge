@@ -11,8 +11,9 @@ import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
 import com.ttf.pixabayviewer.BuildConfig
-import com.ttf.pixabayviewer.data.NetworkInfo
+import com.ttf.pixabayviewer.data.network.NetworkCheck
 import com.ttf.pixabayviewer.data.api.PixabayApi
+import com.ttf.pixabayviewer.data.network.ConnectionLiveData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
@@ -75,7 +76,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkInfo(@ApplicationContext applicationContext: Context): NetworkInfo {
-        return NetworkInfo(applicationContext)
+    fun provideNetworkCheck(@ApplicationContext applicationContext: Context): NetworkCheck {
+        return NetworkCheck(applicationContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectionLiveData(
+        @ApplicationContext applicationContext: Context,
+        networkCheck: NetworkCheck
+    ): ConnectionLiveData {
+        return ConnectionLiveData(applicationContext, networkCheck)
     }
 }

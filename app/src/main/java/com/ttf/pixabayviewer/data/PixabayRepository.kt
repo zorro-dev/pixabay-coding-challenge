@@ -3,6 +3,7 @@ package com.ttf.pixabayviewer.data
 import com.ttf.pixabayviewer.data.api.IResult
 import com.ttf.pixabayviewer.data.models.SearchImagesResponse
 import com.ttf.pixabayviewer.data.models.SearchImagesSendData
+import com.ttf.pixabayviewer.data.network.NetworkCheck
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -18,14 +19,14 @@ interface PixabayRepository {
 class PixabayRepositoryImpl @Inject constructor(
     private val pixabayDataSource: PixabayDataSource,
     private val imageChaDataSource: ImagesCacheDataSource,
-    private val networkInfo: NetworkInfo,
+    private val networkCheck: NetworkCheck,
 ) : PixabayRepository {
 
     override suspend fun search(searchImagesSendData: SearchImagesSendData): Flow<IResult<SearchImagesResponse>> {
         return flow {
             emit(IResult.loading())
 
-            val isOnline = networkInfo.isInternetAvailable()
+            val isOnline = networkCheck.isInternetAvailable()
 
             if (isOnline) {
                 val result = pixabayDataSource.search(searchImagesSendData)

@@ -2,6 +2,7 @@ package com.ttf.pixabayviewer.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.ttf.pixabayviewer.ui.base.BaseViewModel
@@ -9,6 +10,7 @@ import com.ttf.pixabayviewer.data.PixabayRepository
 import com.ttf.pixabayviewer.data.api.IResult
 import com.ttf.pixabayviewer.data.models.ImageHit
 import com.ttf.pixabayviewer.data.models.SearchImagesSendData
+import com.ttf.pixabayviewer.data.network.ConnectionLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -19,17 +21,29 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: PixabayRepository,
     @ApplicationContext applicationContext: Context,
+    private val connectionLiveData: ConnectionLiveData
 ) : BaseViewModel<MainNavigator>(applicationContext) {
 
     val paginationProgress = MutableLiveData(false)
     val query = MutableLiveData("")
     val images = MutableLiveData<MutableList<ImageHit>>(mutableListOf())
 
-    private var page = 0
+    private val startPage = 1
+    private val paginationIndexTrigger = 10
+
+    private var isPaginationStopped = false
+    private var page = startPage
     private var job: Job? = null
 
     init {
         search("fruits")
+
+        connectionLiveData.observeForever {isAvailable ->
+            if (isAvailable && isPaginationStopped) {
+                isPaginationStopped = false
+                paginateForQuery(query.value!!)
+            }
+        }
     }
 
     var onClickImage: (ImageHit) -> Unit = { item ->
@@ -41,7 +55,7 @@ class MainViewModel @Inject constructor(
     }
 
     var onScroll: (Int) -> Unit = {
-        if (it >= (images.value?.size ?: 0) - 10) {
+        if (it >= (images.value?.size ?: 0) - paginationIndexTrigger) {
             paginateForQuery(query.value!!)
         }
     }
@@ -55,22 +69,20 @@ class MainViewModel @Inject constructor(
 
     private fun releasePagination() {
         job?.cancel()
-        page = 0
+        page = startPage
         images.postValue(mutableListOf())
     }
 
     private fun stopPagination() {
-        page = -2
+        isPaginationStopped = true
     }
 
     @SuppressLint("HardwareIds")
     fun paginateForQuery(query: String) {
-        if (job?.isActive == true || page == -2) return
+        if (job?.isActive == true || isPaginationStopped) return
 
         job = viewModelScope.launch {
             paginationProgress.postValue(true)
-            page++
-
             repository.search(SearchImagesSendData(query, page)).collect { result ->
                 when (result.status) {
                     IResult.Status.LOADING -> progress.postValue(true)
@@ -80,11 +92,14 @@ class MainViewModel @Inject constructor(
                             stopPagination()
                         }
 
+                        Log.d("TAG", "page: $page")
+
                         result.data?.let {
                             val items = images.value!!
                             if (it.hits.isEmpty()) {
                                 stopPagination()
                             } else {
+                                page++
                                 items.addAll(it.hits)
                             }
 

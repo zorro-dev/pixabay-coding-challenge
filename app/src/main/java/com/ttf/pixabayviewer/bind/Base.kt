@@ -29,6 +29,7 @@ object Base {
         list.adapter ?: run {
             list.itemAnimator?.changeDuration = 0
             list.adapter = ImagesAdapter(onClick)
+            (list.adapter as ImagesAdapter).stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)

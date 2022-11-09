@@ -1,4 +1,4 @@
-package com.ttf.pixabayviewer.data
+package com.ttf.pixabayviewer.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,7 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 
-class NetworkInfo @Inject constructor(@ApplicationContext val context: Context) {
+class NetworkCheck @Inject constructor(@ApplicationContext val context: Context) {
 
     fun isInternetAvailable(): Boolean {
         val result: Boolean
