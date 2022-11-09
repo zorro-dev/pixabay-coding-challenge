@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.ttf.pixabayviewer.ui.main.MainFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.ttf.pixabayviewer.ui.details.DetailsFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_details" >
+        <argument
+            android:name="item"
+            app:argType="com.ttf.pixabayviewer.data.models.ImageHit" />
+    </fragment>
+    <action android:id="@+id/action_global_detailsFragment" app:destination="@id/detailsFragment" />
+</navigation>
