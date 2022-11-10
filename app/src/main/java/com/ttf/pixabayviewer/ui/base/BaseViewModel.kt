@@ -16,13 +16,5 @@ open class BaseViewModel<T : BaseNavigator>(application: Context) : ViewModel() 
         navigator?.close()
     }
 
-    fun onClickRetry() {
-        reload()
-    }
-
-    open fun reload() {
-
-    }
-
     fun getBase(): BaseViewModel<T> = this
 }

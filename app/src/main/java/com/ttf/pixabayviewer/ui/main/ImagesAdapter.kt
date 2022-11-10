@@ -20,7 +20,7 @@ class ImagesAdapter(private val onClick: (ImageHit) -> Unit) :
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<ImageHit>() {
             override fun areItemsTheSame(oldItem: ImageHit, newItem: ImageHit): Boolean =
-                oldItem == newItem
+                oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: ImageHit, newItem: ImageHit): Boolean =
                 oldItem == newItem

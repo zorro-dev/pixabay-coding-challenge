@@ -1,4 +1,4 @@
-package com.ttf.pixabayviewer.data
+package com.ttf.pixabayviewer.data.datasource
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE

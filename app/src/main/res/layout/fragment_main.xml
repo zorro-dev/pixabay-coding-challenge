@@ -31,8 +31,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:contentInsetStart="0dp"
-                app:title="@string/pixabay">
+                app:contentInsetStart="0dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -40,17 +39,22 @@
                     android:layout_marginHorizontal="5dp"
                     android:gravity="center_vertical">
 
-                    <androidx.appcompat.widget.SearchView
+                    <EditText
                         android:id="@+id/searchView"
                         onQuerySubmit="@{viewModel.onQuerySubmit}"
-                        query="@{viewModel.query}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
-                        android:background="#80000000"
-                        app:iconifiedByDefault="false"
-                        app:queryHint="@string/search"
-                        app:searchIcon="@null" />
+                        android:layout_marginHorizontal="20dp"
+                        android:background="@drawable/search_background"
+                        android:hint="@string/search"
+                        android:maxLines="1"
+                        android:imeOptions="actionSearch"
+                        android:textColor="@color/white"
+                        android:paddingHorizontal="10dp"
+                        android:singleLine="true"
+                        android:text="@{viewModel.query}"
+                        app:queryBackground="@android:color/transparent" />
 
                 </RelativeLayout>
 
@@ -67,8 +71,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imageRecyclerView"
                 onClick="@{viewModel.onClickImage}"
-                pixabayHits="@{viewModel.images}"
                 onScroll="@{viewModel.onScroll}"
+                pixabayHits="@{viewModel.images}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -85,6 +89,21 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/nothing_to_show"
+            android:visibility="@{!viewModel.offlineMode &amp; viewModel.images.size() == 0 &amp; !viewModel.paginationProgress ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/check_internet_connection"
+            android:visibility="@{viewModel.offlineMode &amp; viewModel.images.size() == 0 &amp; !viewModel.paginationProgress ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

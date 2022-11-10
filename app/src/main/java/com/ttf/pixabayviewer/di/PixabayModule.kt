@@ -3,7 +3,13 @@ package com.ttf.pixabayviewer.di
 import android.content.Context
 import com.ttf.pixabayviewer.data.*
 import com.ttf.pixabayviewer.data.api.PixabayApi
+import com.ttf.pixabayviewer.data.datasource.ImagesCacheDataSource
+import com.ttf.pixabayviewer.data.datasource.ImagesCacheDataSourceImpl
+import com.ttf.pixabayviewer.data.datasource.PixabayDataSource
+import com.ttf.pixabayviewer.data.datasource.PixabayRemoteDataSource
 import com.ttf.pixabayviewer.data.network.NetworkCheck
+import com.ttf.pixabayviewer.data.repository.PixabayRepository
+import com.ttf.pixabayviewer.data.repository.PixabayRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +24,7 @@ object PixabayModule {
     @Provides
     @Singleton
     fun providePixabayDataSource(pixabayApi: PixabayApi): PixabayDataSource {
-        return PixabayDataSourceImpl(pixabayApi)
+        return PixabayRemoteDataSource(pixabayApi)
     }
 
     @Provides

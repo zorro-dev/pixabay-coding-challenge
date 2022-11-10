@@ -2,6 +2,8 @@ package com.ttf.pixabayviewer.bind
 
 import android.annotation.SuppressLint
 import android.util.Size
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -29,7 +31,8 @@ object Base {
         list.adapter ?: run {
             list.itemAnimator?.changeDuration = 0
             list.adapter = ImagesAdapter(onClick)
-            (list.adapter as ImagesAdapter).stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            (list.adapter as ImagesAdapter).stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -66,18 +69,14 @@ object Base {
 
     @BindingAdapter("onQuerySubmit")
     @JvmStatic
-    fun SearchView.setOnQuerySubmit(onQuerySubmit: (String) -> Unit) {
-        setOnQueryTextListener(object : OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                onQuerySubmit.invoke(query ?: "")
-                return true
+    fun EditText.setOnQuerySubmit(onQuerySubmit: (String) -> Unit) {
+        setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                onQuerySubmit.invoke(text.toString())
+                return@setOnEditorActionListener true
             }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-
-        })
+            false
+        }
     }
 
     @BindingAdapter("query")

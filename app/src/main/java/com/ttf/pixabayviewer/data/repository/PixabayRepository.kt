@@ -1,6 +1,8 @@
-package com.ttf.pixabayviewer.data
+package com.ttf.pixabayviewer.data.repository
 
 import com.ttf.pixabayviewer.data.api.IResult
+import com.ttf.pixabayviewer.data.datasource.ImagesCacheDataSource
+import com.ttf.pixabayviewer.data.datasource.PixabayDataSource
 import com.ttf.pixabayviewer.data.models.SearchImagesResponse
 import com.ttf.pixabayviewer.data.models.SearchImagesSendData
 import com.ttf.pixabayviewer.data.network.NetworkCheck
@@ -11,6 +13,10 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 interface PixabayRepository {
+
+    companion object {
+        const val pixabayPageSize = 50
+    }
 
     suspend fun search(searchImagesSendData: SearchImagesSendData): Flow<IResult<SearchImagesResponse>>
 

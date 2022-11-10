@@ -1,4 +1,4 @@
-package com.ttf.pixabayviewer.data
+package com.ttf.pixabayviewer.data.datasource
 
 import com.ttf.pixabayviewer.data.api.IResult
 import com.ttf.pixabayviewer.data.api.PixabayApi
@@ -11,15 +11,15 @@ interface PixabayDataSource {
     suspend fun search(searchImagesSendData: SearchImagesSendData): IResult<SearchImagesResponse>
 }
 
-class PixabayDataSourceImpl @Inject constructor(private val pixabayApi: PixabayApi) :
+class PixabayRemoteDataSource @Inject constructor(private val pixabayApi: PixabayApi) :
     BaseDataSource(), PixabayDataSource {
 
     override suspend fun search(searchImagesSendData: SearchImagesSendData): IResult<SearchImagesResponse> {
-        val searchQuery = searchImagesSendData.searchQuery
+        val queryUrlEncoded = searchImagesSendData.queryUrlEncoded
         val page = searchImagesSendData.page
         val perPage = searchImagesSendData.perPage
 
-        return getResponse(request = { pixabayApi.search(searchQuery, page, perPage) },
+        return getResponse(request = { pixabayApi.search(queryUrlEncoded, page, perPage) },
             defaultErrorMessage = "Error signUp")
     }
 

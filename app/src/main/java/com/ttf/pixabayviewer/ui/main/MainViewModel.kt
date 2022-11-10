@@ -5,8 +5,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.ttf.pixabayviewer.R
 import com.ttf.pixabayviewer.ui.base.BaseViewModel
-import com.ttf.pixabayviewer.data.PixabayRepository
+import com.ttf.pixabayviewer.data.repository.PixabayRepository
 import com.ttf.pixabayviewer.data.api.IResult
 import com.ttf.pixabayviewer.data.models.ImageHit
 import com.ttf.pixabayviewer.data.models.SearchImagesSendData
@@ -21,10 +22,11 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: PixabayRepository,
     @ApplicationContext applicationContext: Context,
-    private val connectionLiveData: ConnectionLiveData
+    connectionLiveData: ConnectionLiveData,
 ) : BaseViewModel<MainNavigator>(applicationContext) {
 
     val paginationProgress = MutableLiveData(false)
+    val offlineMode = MutableLiveData(false)
     val query = MutableLiveData("")
     val images = MutableLiveData<MutableList<ImageHit>>(mutableListOf())
 
@@ -38,7 +40,8 @@ class MainViewModel @Inject constructor(
     init {
         search("fruits")
 
-        connectionLiveData.observeForever {isAvailable ->
+        connectionLiveData.observeForever { isAvailable ->
+            offlineMode.postValue(!isAvailable)
             if (isAvailable && isPaginationStopped) {
                 isPaginationStopped = false
                 paginateForQuery(query.value!!)
@@ -61,6 +64,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun search(query: String) {
+        Log.d("TAG", "search: ")
         val filteredQuery = query.trim()
         this.query.postValue(filteredQuery)
         releasePagination()
@@ -68,6 +72,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun releasePagination() {
+        isPaginationStopped = false
         job?.cancel()
         page = startPage
         images.postValue(mutableListOf())
@@ -92,8 +97,6 @@ class MainViewModel @Inject constructor(
                             stopPagination()
                         }
 
-                        Log.d("TAG", "page: $page")
-
                         result.data?.let {
                             val items = images.value!!
                             if (it.hits.isEmpty()) {
@@ -108,6 +111,7 @@ class MainViewModel @Inject constructor(
                     }
                     IResult.Status.ERROR -> {
                         stopPagination()
+                        navigator?.showSnackBar(R.string.something_went_wrong)
                     }
                 }
             }

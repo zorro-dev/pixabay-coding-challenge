@@ -1,14 +1,16 @@
 package com.ttf.pixabayviewer.ui.base
 
+import androidx.annotation.StringRes
+
 interface BaseNavigator {
 
-    fun showToast(msg: String?)
+    fun showToast(msg: String)
 
-    fun showToast(msg: Int)
+    fun showToast(@StringRes msg: Int)
 
-    fun showSnackBar(msg: String?, success: Boolean = false)
+    fun showSnackBar(msg: String)
 
-    fun showSnackBar(msg: Int, success: Boolean = false)
+    fun showSnackBar(@StringRes msg: Int)
 
     fun close()
 
